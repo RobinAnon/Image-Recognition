@@ -1,3 +1,4 @@
 # ADS&A : ESILV IBO3
-# Robin CONVERT & Sasha COLLOMÉ
+# Robin "The Brain" CONVERT & Sasha "Docker Master" COLLOMÉ
 # Project : ImageRecognition
+
