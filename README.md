@@ -13,6 +13,7 @@ Dans un second temps, nous réalisons une autre IA pour la reconnaissance de Pok
 
 
 VO
+
 Our goal is to create an artificial intelligence specialized in images recognition.
 To do that, we use a Convolutional Neural Network (CNN) to generate features maps (matrices showing physical & geometrical features of an image) used as an input to a MLP (MultiLayer Perceptron). The latter returns a probability for an image's nature.
 
