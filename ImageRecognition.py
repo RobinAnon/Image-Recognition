@@ -9,75 +9,151 @@ Original file is located at
 # FINETUNING
 """
 
+### Cell 1 ###
 import numpy as np
 import matplotlib.pyplot as plt
 # %matplotlib inline
+#car notebook
 
 from tensorflow.keras.applications import VGG16
 from tensorflow.keras.layers import Flatten, Dense, Dropout
-# dropout limite l'overfitting
+#dropout limite l'overfitting
+
 from tensorflow.keras.models import Sequential
+
 from tensorflow.keras.optimizers import Adam
-# optimiser pour la backpropagation
+#optimiser pour la backpropagation
+
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.datasets import cifar10
 
-INPUT_SHAPE = (32, 32, 3)
-# (width, height, channels)
-LR = 1e-4
-# Learning rate
-DECAY = 1e-6
-BATCH_SIZE = 128
-EPOCH = 250
-# unité pour 1 parcours de dataset
 
-VGG_CONVS = VGG16(weights='imagenet', include_top = False, input_shape = INPUT_SHAPE)
-for layer in VGG_CONVS.layers:
-  layer.trainable = False
-
-model = Sequential([
-    VGG_CONVS,
-    Flatten(),
-    Dense(1024, activation = 'relu'),
-    Dropout(0.5),
-    Dense(10, activation = 'softmax')
-])
-
-model.summary()
-
+### Cell 2 ###
 (X_train, Y_train), (X_valid, Y_valid) = cifar10.load_data()
 
 size= X_train.shape[0] + X_valid.shape[0]
 X_train.shape[0]/size
 
-plt.figure(figsize = (19, 10))
+plt.figure(figsize=(19, 10))
 plt.axis('off')
 
 for x in range(4):
-  for y in range(4):
-    i = x + y * 4
+    for y in range(4):
+        i= x + y*4
     img = X_train[i]
-
-    plt.subplot(4, 4, i + 1)
+    
+    plt.subplot(4, 4, i+1)
     plt.imshow(img)
+plt.show()
+
+
+### Cell 3 ###
+INPUT_SHAPE = (32, 32, 3)
+# width height channels
+LR = 1e-4
+#Learning rate
+DECAY = 1e-6
+BATCH_SIZE = 128
+EPOCH = 250
+#unité pour 1 parcours de dataset
+
+
+### Cell 4 ###
+VGG_CONVS = VGG16(weights='imagenet', include_top=False, input_shape=INPUT_SHAPE)
+for layer in VGG_CONVS.layers:
+    layer.trainable= False
+
+
+### Cell 5 ###
+model = Sequential([
+                    VGG_CONVS,
+                    Flatten(),
+                    Dense(1024, activation='relu'),
+                    Dropout(0.5),
+                    Dense(10, activation='softmax')
+                    ])
+
+
+### Cell 6 ###
+model.summary()
+
+print(Y_train[2])
+
+
+### Cell 7 ###
+labels = [
+          'airplane',
+          'automobile',
+          'bird',
+          'cat',
+          'deer',
+          'dog',
+          'frog',
+          'horse',
+          'ship',
+          'truck'
+          ]
+
+
+### Cell 8 ###
+model.compile(loss='categorical_crossentropy', optimizer=Adam(lr=LR, decay=DECAY), metrics=['accuracy'])
+
+print(type(X_train))
+print(type(Y_train))
+print(type(X_valid))
+print(type(Y_valid))
+
+
+print(len(Y_train[0]))
+Y_train[0]
+
+
+### Cell 10 ###
+history = model.fit(X_train / 255.0 , to_categorical(Y_train), batch_size=BATCH_SIZE, shuffle=True, epochs=250,
+                    validation_data=(X_valid/255.0, to_categorical(Y_valid)))
+
+
+### Cell 11 ###
+# Plot loss (left) and accuracy (right)
+plt.figure(figsize=(19, 10))
+
+# training loss and validation loss
+plt.subplot(121)
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+
+# training accuracy and validation accuracy
+plt.subplot(122)
+plt.plot(history.history['acc'])
+plt.plot(history.history['val_acc'])
+plt.ylabel('accuracy')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+
 
 plt.show()
 
-Y_train[1]
 
-labels = {
-    'airplane',
-    'automobile',
-    'bird',
-    'cat',
-    'deer',
-    'dog',
-    'frog',
-    'horse',
-    'ship',
-    'truck'
-}
+### Cell 12 ###
+def predictImagei(i,X_valid,Y_valid,model):
+    img = X_valid[i]
+    label = labels[Y_valid[i][0]]
 
-model.compile(loss = 'categorical_crossentropy', optimizer = Adam(lr = LR, decay = DECAY), metrics=['accuracy'])
+    y_ = model.predict(np.array([img], np.float32) / 255.0)
+    label_ = labels[np.argmax(y_[0])]
+        
+        print(f'Predicted: {label_} -> Target {label}')
+    
+        plt.figure(figsize=(3, 3))
+            plt.subplot(1, 1, 1)
+            plt.imshow(img)
+            plt.show()
 
-model.fit(X_train / 255.0, to_categorical(Y_train), batch_size = BATCH_SIZE, shuffle = True, epochs = EPOCH, validation_data = (X_valid / 255.0, to_categorical(Y_valid)))
+predictImagei(4,X_valid,Y_valid,model)
+predictImagei(6,X_valid,Y_valid,model)
+predictImagei(10,X_valid,Y_valid,model)
+predictImagei(15,X_valid,Y_valid,model)
+predictImagei(13,X_valid,Y_valid,model)
