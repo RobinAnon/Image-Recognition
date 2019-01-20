@@ -14,7 +14,7 @@ Original file is located at
 
 ### Cell 2 ###
 !touch kaggle.json
-!echo '{"username":"robinconvert","key":"bd1aa73feb507ccba2230ea28531ee92"}' > kaggle.json
+!echo '{"username":"robinconvert","key":""}' > kaggle.json
 !mv ./kaggle.json ~/.kaggle/kaggle.json
 
 
